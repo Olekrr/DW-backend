@@ -6,6 +6,7 @@
         "includeFiles": "data/**"
       }
     },
+    "builds": [],
     "routes": [
       {
         "src": "/(.*)",
