@@ -20,8 +20,8 @@ const raidDataPath = path.join(__dirname, 'data', 'raidData.json');
 
 // Admin credentials
 const admin = {
-  username: 'officer',
-  passwordHash: bcrypt.hashSync('password123', 10), // Hash the admin password
+  username: process.env.ADMIN_USERNAME,
+  passwordHash: bcrypt.hashSync(process.env.ADMIN_PASSWORD, 10),
 };
 
 // Utility functions to read and write raid data
