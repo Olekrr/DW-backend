@@ -8,7 +8,6 @@ const path = require('path');
 require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
 const SECRET_KEY = process.env.SECRET_KEY || 'fallback_secret_key';
 
 // Middleware
@@ -26,8 +25,8 @@ const admin = {
 
 // Utility functions to read and write raid data
 const readRaidData = () => JSON.parse(fs.readFileSync(raidDataPath, 'utf-8'));
-const writeRaidData = (data) => fs.writeFileSync(raidDataPath, JSON.stringify(data, null, 2));
-
+const writeRaidData = (data) =>
+  fs.writeFileSync(raidDataPath, JSON.stringify(data, null, 2));
 
 // Routes
 
@@ -150,7 +149,5 @@ app.delete('/members/:id', authenticate, (req, res) => {
   }
 });
 
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+// Export the app for serverless function usage
+module.exports = app;

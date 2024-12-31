@@ -1,9 +1,14 @@
 {
-    "routes": [
+    "rewrites": [
       {
-        "src": "/(.*)",
-        "dest": "/server.js"
+        "source": "/(.*)",
+        "destination": "/api"
       }
-    ]
+    ],
+    "functions": {
+      "api/index.js": {
+        "runtime": "nodejs18.x"
+      }
+    }
   }
   
