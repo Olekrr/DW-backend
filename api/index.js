@@ -15,7 +15,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Path to the data file
-const raidDataPath = path.join(__dirname, 'data', 'raidData.json');
+const raidDataPath = path.join(process.cwd(), 'data', 'raidData.json');
 
 // Admin credentials
 const admin = {
