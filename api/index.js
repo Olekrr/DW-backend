@@ -92,12 +92,15 @@ app.post('/members', authenticate, async (req, res) => {
     };
 
     const result = await membersCollection.insertOne(newMember);
-    res.status(201).json(result.ops[0]); // Return the inserted document
+
+    // Return the inserted document with the newly generated ID
+    res.status(201).json({ _id: result.insertedId, ...newMember });
   } catch (error) {
     console.error('Error adding member:', error.message);
     res.status(500).json({ message: 'Failed to add member' });
   }
 });
+
 
 // Update a member (admin only)
 app.put('/members/:id', authenticate, async (req, res) => {
