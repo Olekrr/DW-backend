@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { ObjectId } = require('mongodb');
 require('dotenv').config();
 const connectToMongoDB = require('./mongoClient');
 
@@ -60,99 +61,96 @@ const authenticate = (req, res, next) => {
   }
 };
 
-// Get all members (public access)
-app.get('/members', async (req, res) => {
+// Raid Group Endpoints
+
+// Get all raid groups
+app.get('/raid-groups', authenticate, async (req, res) => {
   try {
     const db = await connectToMongoDB();
-    const membersCollection = db.collection('members');
-    const members = await membersCollection.find().toArray();
-    res.json(members);
+    const raidGroupsCollection = db.collection('raidgroup');
+    const raidGroups = await raidGroupsCollection.find().toArray();
+    res.json(raidGroups);
   } catch (error) {
-    console.error('Error fetching members:', error.message);
-    res.status(500).json({ message: 'Failed to fetch members' });
+    console.error('Error fetching raid groups:', error.message);
+    res.status(500).json({ message: 'Failed to fetch raid groups' });
   }
 });
 
-// Add a new member (admin only)
-app.post('/members', authenticate, async (req, res) => {
-  const { characterName, class: memberClass, raidAssignment = null, role = null } = req.body;
-
-  if (!characterName || !memberClass) {
-    return res.status(400).json({ message: 'Character name and class are required' });
-  }
-
+// Get a specific raid group by ID
+app.get('/raid-groups/:id', authenticate, async (req, res) => {
   try {
     const db = await connectToMongoDB();
-    const membersCollection = db.collection('members');
-    const newMember = {
-      characterName,
-      class: memberClass,
-      raidAssignment,
-      role,
-    };
+    const raidGroupsCollection = db.collection('raidgroup');
+    const raidGroup = await raidGroupsCollection.findOne({ _id: new ObjectId(req.params.id) });
 
-    const result = await membersCollection.insertOne(newMember);
+    if (!raidGroup) {
+      return res.status(404).json({ message: 'Raid group not found' });
+    }
 
-    // Return the inserted document with the newly generated ID
-    res.status(201).json({ _id: result.insertedId, ...newMember });
+    res.json(raidGroup);
   } catch (error) {
-    console.error('Error adding member:', error.message);
-    res.status(500).json({ message: 'Failed to add member' });
+    console.error('Error fetching raid group:', error.message);
+    res.status(500).json({ message: 'Failed to fetch raid group' });
   }
 });
 
+// Create a new raid group
+app.post('/raid-groups', authenticate, async (req, res) => {
+  const newRaidGroup = req.body;
 
-// Update a member (admin only)
-app.put('/members/:id', authenticate, async (req, res) => {
+  try {
+    const db = await connectToMongoDB();
+    const raidGroupsCollection = db.collection('raidgroup');
+    const result = await raidGroupsCollection.insertOne(newRaidGroup);
+    res.status(201).json({ _id: result.insertedId, ...newRaidGroup });
+  } catch (error) {
+    console.error('Error creating raid group:', error.message);
+    res.status(500).json({ message: 'Failed to create raid group' });
+  }
+});
+
+// Update a raid group
+app.put('/raid-groups/:id', authenticate, async (req, res) => {
   const { id } = req.params;
-  const { characterName, class: memberClass, raidAssignment, role } = req.body;
+  const updates = req.body;
 
   try {
     const db = await connectToMongoDB();
-    const membersCollection = db.collection('members');
-    const updatedMember = {
-      ...(characterName && { characterName }),
-      ...(memberClass && { class: memberClass }),
-      ...(raidAssignment && { raidAssignment }),
-      ...(role && { role }),
-    };
-
-    const result = await membersCollection.findOneAndUpdate(
+    const raidGroupsCollection = db.collection('raidgroup');
+    const result = await raidGroupsCollection.updateOne(
       { _id: new ObjectId(id) },
-      { $set: updatedMember },
-      { returnOriginal: false }
+      { $set: updates }
     );
 
-    if (!result.value) {
-      return res.status(404).json({ message: 'Member not found' });
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ message: 'Raid group not found' });
     }
 
-    res.json(result.value);
+    res.json({ message: 'Raid group updated successfully' });
   } catch (error) {
-    console.error('Error updating member:', error.message);
-    res.status(500).json({ message: 'Failed to update member' });
+    console.error('Error updating raid group:', error.message);
+    res.status(500).json({ message: 'Failed to update raid group' });
   }
 });
 
-// Delete a member (admin only)
-app.delete('/members/:id', authenticate, async (req, res) => {
+// Delete a raid group
+app.delete('/raid-groups/:id', authenticate, async (req, res) => {
   const { id } = req.params;
 
   try {
     const db = await connectToMongoDB();
-    const membersCollection = db.collection('members');
-    const result = await membersCollection.deleteOne({ _id: new ObjectId(id) });
+    const raidGroupsCollection = db.collection('raidgroup');
+    const result = await raidGroupsCollection.deleteOne({ _id: new ObjectId(id) });
 
     if (result.deletedCount === 0) {
-      return res.status(404).json({ message: 'Member not found' });
+      return res.status(404).json({ message: 'Raid group not found' });
     }
 
-    res.json({ message: 'Member deleted' });
+    res.json({ message: 'Raid group deleted successfully' });
   } catch (error) {
-    console.error('Error deleting member:', error.message);
-    res.status(500).json({ message: 'Failed to delete member' });
+    console.error('Error deleting raid group:', error.message);
+    res.status(500).json({ message: 'Failed to delete raid group' });
   }
 });
 
-// Export the app for serverless function usage
 module.exports = app;

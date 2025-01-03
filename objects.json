@@ -1,0 +1,57 @@
+{
+    "raidName": "Molten Core",
+    "bossAssignments": {
+      "lucifron": {
+        "tankAssignments": {
+          "mainTank": "TankName1",
+          "offTank1": "TankName2",
+          "offTank2": "TankName3"
+        },
+        "healerAssignments": {
+          "healers": [
+            { "healer": "HealerName1", "target": "MainTank" },
+            { "healer": "HealerName2", "target": "MainTank" },
+            { "healer": "HealerName3", "target": "OffTank1" },
+            { "healer": "HealerName4", "target": "OffTank1" },
+            { "healer": "HealerName5", "target": "OffTank2" },
+            { "healer": "HealerName6", "target": "OffTank2" },
+            { "healer": "HealerName7", "target": "Raid" },
+            { "healer": "HealerName8", "target": "Raid" }
+          ],
+          "remainingHealers": ["HealerName9", "HealerName10"]
+        },
+        "dispellerAssignments": {
+          "offensiveDispellers": [
+            "DispellerName1",
+            "DispellerName2",
+            "DispellerName3"
+          ],
+          "groupDispellers": {
+            "group1": "DispellerName4",
+            "group2": "DispellerName5",
+            "group3": "DispellerName6",
+            "group4": "DispellerName7",
+            "group5": "DispellerName8",
+            "group6": "DispellerName9",
+            "group7": "DispellerName10",
+            "group8": "DispellerName11"
+          }
+        },
+        "decurserAssignments": {
+          "groupDecursers": {
+            "group1": "DecurserName1",
+            "group2": "DecurserName2",
+            "group3": "DecurserName3",
+            "group4": "DecurserName4",
+            "group5": "DecurserName5",
+            "group6": "DecurserName6",
+            "group7": "DecurserName7",
+            "group8": "DecurserName8"
+          }
+        }
+      }
+    },
+    "createdBy": "officer1",
+    "updatedAt": "2024-01-02T15:00:00Z"
+  }
+  
