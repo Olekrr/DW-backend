@@ -43,11 +43,13 @@ router.get("/:id", authenticate, async (req, res) => {
 // Update a specific raid group by ID
 router.put("/:id", authenticate, async (req, res) => {
   const { id } = req.params;
-  const updatedRaidGroup = req.body;
+  const updatedRaidGroup = { ...req.body };
+
+  delete updatedRaidGroup._id;
 
   try {
     console.log("Updating raid group with ID:", id);
-    console.log("Received payload:", JSON.stringify(updatedRaidGroup, null, 2));
+    console.log("Sanitized payload:", JSON.stringify(updatedRaidGroup, null, 2));
 
     const db = await connectToMongoDB();
     const raidGroupsCollection = db.collection("raidgroup");
