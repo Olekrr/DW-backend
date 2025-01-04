@@ -24,6 +24,7 @@ router.get("/:id", authenticate, async (req, res) => {
   try {
     const db = await connectToMongoDB();
     const raidGroupsCollection = db.collection("raidgroup");
+
     const raidGroup = await raidGroupsCollection.findOne({
       _id: new ObjectId(id),
     });
@@ -45,8 +46,12 @@ router.put("/:id", authenticate, async (req, res) => {
   const updatedRaidGroup = req.body;
 
   try {
+    console.log("Updating raid group with ID:", id);
+    console.log("Received payload:", JSON.stringify(updatedRaidGroup, null, 2));
+
     const db = await connectToMongoDB();
     const raidGroupsCollection = db.collection("raidgroup");
+
     const result = await raidGroupsCollection.updateOne(
       { _id: new ObjectId(id) },
       { $set: updatedRaidGroup }
@@ -56,6 +61,7 @@ router.put("/:id", authenticate, async (req, res) => {
       return res.status(404).json({ message: "Raid group not found" });
     }
 
+    console.log("Update result:", result);
     res.json({ message: "Raid group updated successfully" });
   } catch (error) {
     console.error("Error updating raid group:", error.message);
@@ -68,9 +74,15 @@ router.post("/", authenticate, async (req, res) => {
   const newRaidGroup = req.body;
 
   try {
+    console.log("Creating a new raid group");
+    console.log("Received payload:", JSON.stringify(newRaidGroup, null, 2));
+
     const db = await connectToMongoDB();
     const raidGroupsCollection = db.collection("raidgroup");
+
     const result = await raidGroupsCollection.insertOne(newRaidGroup);
+    console.log("Raid group created with ID:", result.insertedId);
+
     res.status(201).json({ _id: result.insertedId, ...newRaidGroup });
   } catch (error) {
     console.error("Error creating raid group:", error.message);
