@@ -20,23 +20,23 @@ router.get('/', authenticate, async (req, res) => {
 
 // Get a specific raid group by ID
 router.get('/:id', authenticate, async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const db = await connectToMongoDB();
-    const raidGroupsCollection = db.collection('raidgroup');
-    const raidGroup = await raidGroupsCollection.findOne({ _id: id });
-
-    if (!raidGroup) {
-      return res.status(404).json({ message: 'Raid group not found' });
+    const { id } = req.params;
+    try {
+      const db = await connectToMongoDB();
+      const raidGroupsCollection = db.collection('raidgroup');
+      const raidGroup = await raidGroupsCollection.findOne({ _id: new ObjectId(id) });
+  
+      if (!raidGroup) {
+        return res.status(404).json({ message: 'Raid group not found' });
+      }
+  
+      res.json(raidGroup);
+    } catch (error) {
+      console.error('Error fetching raid group:', error.message);
+      res.status(500).json({ message: 'Failed to fetch raid group' });
     }
-
-    res.json(raidGroup);
-  } catch (error) {
-    console.error('Error fetching raid group:', error.message);
-    res.status(500).json({ message: 'Failed to fetch raid group' });
-  }
-});
+  });
+  
 
 // Add a new raid group
 router.post('/', authenticate, async (req, res) => {
