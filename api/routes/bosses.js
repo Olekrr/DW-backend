@@ -38,6 +38,26 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+// Get a specific boss by name
+router.get('/name/:name', async (req, res) => {
+  const { name } = req.params;
+
+  try {
+    const db = await connectToMongoDB();
+    const bossesCollection = db.collection('bosses');
+    const boss = await bossesCollection.findOne({ name });
+
+    if (!boss) {
+      return res.status(404).json({ message: 'Boss not found' });
+    }
+
+    res.json(boss);
+  } catch (error) {
+    console.error(`Error fetching boss with name ${name}:`, error.message);
+    res.status(500).json({ message: 'Failed to fetch boss by name' });
+  }
+});
+
 // Update roles for a specific boss
 router.put('/:id/roles', authenticate, async (req, res) => {
   const { id } = req.params;
