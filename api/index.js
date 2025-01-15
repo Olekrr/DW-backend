@@ -6,6 +6,7 @@ require('dotenv').config();
 const membersRoutes = require('./routes/members');
 const raidGroupsRoutes = require('./routes/raidGroups');
 const authRoutes = require('./routes/auth');
+const bossesRoutes = require('./routes/bosses');
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use(bodyParser.json());
 app.use('/auth', authRoutes);
 app.use('/members', membersRoutes);
 app.use('/raid-groups', raidGroupsRoutes);
+app.use('/bosses', bossesRoutes);
 
 // Home route
 app.get('/', (req, res) => {
